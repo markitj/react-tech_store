@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { linkData } from './linkData';
 import { socialData } from './socialData';
-import { items } from './productData';
+// import { items } from './productData';
+import { client } from './contentful';
 
 const ProductContext = React.createContext();
 
@@ -31,7 +32,14 @@ class ProductProvider extends Component {
   componentDidMount() {
     // from contentful
 
-    this.setProducts(items);
+    // this.setProducts(items);
+
+    client
+      .getEntries({
+        content_type: 'techStoreProduct'
+      })
+      .then(response => this.setProducts(response.items))
+      .catch(console.error);
   }
 
   // set products
@@ -46,7 +54,7 @@ class ProductProvider extends Component {
     let featuredProducts = storeProducts.filter(item => item.featured === true);
     // get max price
     let maxPrice = Math.max(...storeProducts.map(item => item.price));
-    console.log(maxPrice);
+
     this.setState(
       {
         storeProducts,
